@@ -80,6 +80,7 @@ def main():
 
     for k in range(50000):
         done = False
+        
         while not done:
             x, y = env.get_state()
             action = agent.select_action()
