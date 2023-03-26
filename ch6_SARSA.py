@@ -107,7 +107,7 @@ class QAgent():
         a_prime = self.select_action(s_prime) # s'에서 선택할 액션(실제로 취한 액션이 아님)
         # SARSA 업데이트 식을 이용
         self.q_table[x, y, a] = self.q_table[x, y, a] + self.alpha * (r + self.q_table[next_x, next_y, a_prime] - self.q_table[x, y, a])
-    
+
     def anneal_eps(self):
         self.eps -= 0.03
         self.eps = max(self.eps, 0.1)

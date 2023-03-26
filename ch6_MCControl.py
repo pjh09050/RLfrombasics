@@ -122,7 +122,6 @@ class QAgent():
             row = q_lst[row_idx]
             for col_idx in range(len(row)):
                 col = row[col_idx]
-                print(col)
                 action = np.argmax(col)
                 data[row_idx, col_idx] = action
         print(data)
@@ -136,7 +135,7 @@ def main():
         history = []
 
         s = env.reset()
-        while not done:
+        while not done: # 한 에피소드가 끝날 때까지
             a = agent.select_action(s)
             s_prime, r, done = env.step(a)
             history.append((s, a, r, s_prime))
