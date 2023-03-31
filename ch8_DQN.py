@@ -92,13 +92,13 @@ def main():
         epsilon = max(0.01, 0.08-0.01*(n_epi/200))
         # Linear annealing from 8% to 1%
         s = env.reset()
-        s = [num for sublist in s for num in sublist]
+        #s = [num for sublist in s for num in sublist]
         s = np.array(s).astype(np.float32)
         done = False
 
         while not done:
             a = q.sample_action(torch.from_numpy(s).float(), epsilon) 
-            s_prime, r, _, done, _= env.step(a)
+            s_prime, r, done, _= env.step(a)
             done_mask = 0.0 if done else 1.0
             memory.put((s,a,r/100.0, s_prime, done_mask))
             s = s_prime
