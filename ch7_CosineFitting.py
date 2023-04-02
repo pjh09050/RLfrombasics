@@ -14,13 +14,13 @@ class Model(nn.Module):
         self.fc1 = nn.Linear(1, 128) # hidden layer를 의미, (앞의 레이어의 노드, 뒤의 레이어의 노드)
         self.fc2 = nn.Linear(128, 128) # 128 * 128개의 w가 필요
         self.fc3 = nn.Linear(128, 128)
-        self.fc4 = nn.Linear(128, 1, bias=False)
+        self.fc4 = nn.Linear(128, 1, bias=False) # bias=False : 이 레이어는 편향 값을 사용하지 않는다.
 
     def forward(self, x):
-        x = F.relu(self.fc1(x)) # 연산할 때 호출되는 함수(비선형 함수인 relu) # 
+        x = F.relu(self.fc1(x)) # 연산할 때 호출되는 함수(비선형 함수인 relu)
         x = F.relu(self.fc2(x))
         x = F.relu(self.fc3(x))
-        x = self.fc4(x)
+        x = self.fc4(x) # 활성화 함수를 사용하지 않고 선형 연산만 수행
         return x
     
 def true_fun(X):
@@ -43,8 +43,9 @@ def main():
     model = Model()
     optimizer = optim.Adam(model.parameters(), lr=0.001) # model.parameters() : model의 학습 가능한 파라미터를 반환한다. 가중치(w)와 편향(b)과 같은 매개 변수들을 의미한다. lr(learning rate) : 한 번의 업데이트 양 조절
 
-    for step in range(10000):
+    for step in range(3):
         batch_x = np.random.choice(data_x, 32) # 랜덤하게 뽑힌 32개의 데이터로 mini-batch를 구성
+
         batch_x_tensor = torch.from_numpy(batch_x).float().unsqueeze(1) # 파이토치의 텐서로 변환
         pred = model(batch_x_tensor)
 
