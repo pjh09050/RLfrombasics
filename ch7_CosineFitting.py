@@ -43,7 +43,7 @@ def main():
     model = Model()
     optimizer = optim.Adam(model.parameters(), lr=0.001) # model.parameters() : model의 학습 가능한 파라미터를 반환한다. 가중치(w)와 편향(b)과 같은 매개 변수들을 의미한다. lr(learning rate) : 한 번의 업데이트 양 조절
 
-    for step in range(3):
+    for step in range(10000):
         batch_x = np.random.choice(data_x, 32) # 랜덤하게 뽑힌 32개의 데이터로 mini-batch를 구성
 
         batch_x_tensor = torch.from_numpy(batch_x).float().unsqueeze(1) # 파이토치의 텐서로 변환
