@@ -6,6 +6,8 @@ import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
 import numpy as np
+import warnings
+warnings.filterwarnings('ignore')
 
 # 하이퍼 파라미터 정의
 # Hyperparameters
@@ -65,9 +67,8 @@ class Qnet(nn.Module):
 def train(q, q_target, memory, optimizer):
     for i in range(10): # 1번의 업데이트에 32개의 데이터가 사용됨, 한 에피소드가 끝날 때마다 버퍼에서 총 320개의 데이터를 뽑아서 사용함
         s, a, r, s_prime, done_mask = memory.sample(batch_size) # 리플레이 버퍼에서 미니 배치 추출
-        print(s)
+
         q_out = q(s)
-        print(q_out)
         q_a = q_out.gather(1, a) # 실제 선택된 액션의 q값을 의미 # a에 해당하는 q값 추출
         max_q_prime = q_target(s_prime).max(1)[0].unsqueeze(1) # q_target 네트워크는 정답지를 계산할 떄 쓰이는 네트워크로 학습 대상이 아니다.
         target = r + gamma * max_q_prime * done_mask
@@ -89,15 +90,15 @@ def main():
     score = 0.0
     optimizer= optim.Adam(q.parameters(), lr=learning_rate) # q_target네트워크는 학습의 대상이 아니기 때문에 q네트워크의 파라미터만 넘겨 준다.
 
-    for n_epi in range(300):
+    for n_epi in range(10000):
         epsilon = max(0.01, 0.08-0.01*(n_epi/200))
         # Linear annealing from 8% to 1%
-        s = env.reset()[0] # s = (카트의 위치, 카트의 속도, 막대의 각도, 막대의 각속도)
+        s = env.reset() # s = (카트의 위치, 카트의 속도, 막대의 각도, 막대의 각속도)
         done = False
 
         while not done:
             a = q.sample_action(torch.from_numpy(s).float(), epsilon)
-            s_prime, r, done, info, _ = env.step(a)
+            s_prime, r, done, info = env.step(a)
             done_mask = 0.0 if done else 1.0
             memory.put((s, a, r/100.0, s_prime, done_mask)) # 100을 나누어주는 이유는 보상의 스케일이 너무 커서 조절
             s = s_prime
@@ -112,7 +113,8 @@ def main():
             q_target.load_state_dict(q.state_dict()) # q네트워크의 파라미터를 q_target네트워크로 복사
             print("n_episode : {}, score : {:.1f}, n_buffer : {}, eps : {:.1f}%".format(n_epi, score/print_interval, memory.size(), epsilon*100))
             score = 0.0
-    
+            env.render()
+
     env.close()
 
 if __name__ == '__main__':
