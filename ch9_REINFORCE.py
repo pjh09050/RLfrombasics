@@ -30,7 +30,7 @@ class Policy(nn.Module):
         self.optimizer.zero_grad()
         for r, prob in self.data[::-1]:
             R = r + gamma * R
-            loss = -R * torch.log(prob)  # 그라디언트 어센트
+            loss = -R * torch.log(prob)  # 그라디언트 어센트 prob = piseta(st,at)
             loss.backward()
         self.optimizer.step()
         self.data = []
