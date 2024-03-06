@@ -15,19 +15,22 @@ class ActorCritic(nn.Module):
         self.data = []
 
         self.fc1 = nn.Linear(4, 256)
-        self.fc_pi = nn.Linear(256, 2)
-        self.fc_v = nn.Linear(256, 1)
+        self.fc_pi = nn.Linear(256, 2) # 정책 함수
+        self.fc_v = nn.Linear(256, 1) # 가치 함수, 학습에만 사용되기 때문에 메인 함수에서는 사용되지 않음
         self.optimizer = optim.Adam(self.parameters(), lr=learning_rate)
 
     def pi(self, x, softmax_dim = 0):
+        print('x', x)
         x = F.relu(self.fc1(x))
         x = self.fc_pi(x)
         prob = F.softmax(x, dim=softmax_dim)
+        print('prob', prob)
         return prob
     
     def v(self, x):
         x = F.relu(self.fc1(x))
         v = self.fc_v(x)
+        print('v', v)
         return v
     
     def put_data(self, transition):
