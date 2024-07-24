@@ -100,6 +100,7 @@ def main():
             a = q.sample_action(torch.from_numpy(s).float(), epsilon)
             s_prime, r, done, info = env.step(a)
             done_mask = 0.0 if done else 1.0
+            print(done_mask)
             memory.put((s, a, r/100.0, s_prime, done_mask)) # 100을 나누어주는 이유는 보상의 스케일이 너무 커서 조절
             s = s_prime
             score += r
